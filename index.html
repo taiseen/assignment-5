@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+  <title>Document</title>
+
+  <style>
+    body {
+      background-color: #EDD163;
+    }
+    h1{
+      margin-top: 10px;
+      text-align: center;
+    }
+    button{
+      border: none;
+      background-color: white;
+      padding: 0;
+    }
+
+    #showResult{
+      display: none ;
+      width: 450px;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <header>
+    <h1>Cooking Master</h1>
+  </header>
+
+  <main>
+
+    <div>
+      <form class="col-md-6 m-auto py-3">
+
+        <div class="input-group mb-1">
+
+          <input id="inputForSearch" type="text" class="form-control" placeholder="List all meals by enter first letter... OR Search by Word">
+
+          <div class="input-group-append">
+            <button id="searchBtn" type="button" class="btn btn-danger">Search</button>
+          </div>
+
+        </div>
+      </form>
+    </div>
+
+    <div class="card mx-auto mt-1" id="showResult">
+
+      <!-- Just For PlaceHolder -->
+      
+    </div>
+
+
+    <div class="row row-cols-2 row-cols-md-4 g-4 p-4" id="meal">
+
+      <!-- Just For PlaceHolder -->
+
+    </div>
+    
+  </main>
+
+
+
+
+  <script src="script.js"></script>
+  <!-- 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script> -->
+</body>
+
+</html>
