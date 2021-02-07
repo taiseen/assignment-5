@@ -14,8 +14,11 @@ function loadData(userInput) {
     let url = "";
     if (userInput.length === 1) {
         url = `https://www.themealdb.com/api/json/v1/1/search.php?f=${userInput}`;
+        mealPlaceHolder.innerHTML = null;
+        
     } else {
         url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${userInput}`;
+        mealPlaceHolder.innerHTML = null;
     }
     fetch(url)
         .then(res => res.json())
@@ -85,13 +88,12 @@ const displayMealDetails = (string) => {
                         <li>${element.strIngredient10}</li>
                     </ul>
                     </div> `;
-
-
                 }
-
             }
 
             div.innerHTML = mealInfo;
             resultPlaceHolder.appendChild(div);
-        })
+        });
+        // very very important (for cleaning previous cash data)
+        resultPlaceHolder.innerHTML = null;
 }
