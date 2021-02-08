@@ -60,14 +60,13 @@ const loadMealDetails = async (userClick) => {
         const data = await res.json();
         displayMealDetails(data.meals, userClick);
     } catch (error) {
-        showErrorInfo("Click is missing...");
+        showErrorInfo(error);
+        //showErrorInfo("Click is missing...");
     }
 }
 
 
 const displayMealDetails = (data, userClick) => {
-
-    console.log('JUST STRING NAME : ', userClick);
 
     // very very important (for cleaning previous cash data)
     errorTag.innerText = '';
@@ -78,34 +77,38 @@ const displayMealDetails = (data, userClick) => {
 
         if (userClick === element.strMeal) {
 
+            //console.log("[#############] :", element['strIngredient1']);
+
             const div = document.createElement('div');
+            const ul = document.createElement('ul');
 
             const mealInfo = `
                     
                     <img src="${element.strMealThumb}" class="card-img-top">
-
                     <div class="card-body">
                         <h3 class="card-title">${element.strMeal}</h3>
                         <p>Ingredients</p>
-                        <ul>                    
-                            <li>${element.strIngredient1}</li>
-                            <li>${element.strIngredient2}</li>
-                            <li>${element.strIngredient3}</li>
-                            <li>${element.strIngredient4}</li>
-                            <li>${element.strIngredient5}</li>
-                            <li>${element.strIngredient6}</li>
-                            <li>${element.strIngredient7}</li>
-                            <li>${element.strIngredient8}</li>
-                            <li>${element.strIngredient9}</li>
-                            <li>${element.strIngredient10}</li>
-                        </ul>
                     </div> `;
+
+            for (let i = 1; i <= 20; i++) {
+
+                let ingredient = "strIngredient" + i;
+
+                //console.log('inside loop ', element[`${ingredient}`]);
+
+                if (element[`${ingredient}`] === '' || element[`${ingredient}`] === null ) {
+                    continue;
+                }
+                const li = document.createElement('li');
+                li.innerText = element[`${ingredient}`];
+                ul.appendChild(li);
+            }
+
             div.innerHTML = mealInfo;
+            div.appendChild(ul)
             resultPlaceHolder.appendChild(div);
         }
     });
-
-
 }
 
 const showErrorInfo = error => {
