@@ -2,6 +2,7 @@
 const button = document.getElementById('searchBtn');
 const mealPlaceHolder = document.getElementById('meal');
 const resultPlaceHolder = document.getElementById('showResult');
+const errorTag = document.getElementById('aboutError');
 
 button.addEventListener('click', (event) => {
     event.preventDefault();
@@ -9,32 +10,31 @@ button.addEventListener('click', (event) => {
     loadData(userInput);
 });
 
-function loadData(userInput) {
+const loadData = async (userInput) => {
 
     let url = "";
     if (userInput.length === 1) {
         url = `https://www.themealdb.com/api/json/v1/1/search.php?f=${userInput}`;
-        mealPlaceHolder.innerHTML = null;
-        resultPlaceHolder.innerHTML = null;
-
     } else {
         url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${userInput}`;
-        mealPlaceHolder.innerHTML = null;
-        resultPlaceHolder.innerHTML = null;
     }
-    fetch(url)
-        .then(res => res.json())
-        .then(data => {
-            displayData(data)
-        })
-    //.catch(error => console.log(error))
+
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        displayData(data.meals);
+    } catch (error) {
+        showErrorInfo("Give a valid word for meal");
+    }
 }
-
-
 
 const displayData = data => {
 
-    data.meals.forEach(element => {
+    // very very important (for cleaning previous cash data)
+    mealPlaceHolder.innerHTML = null;
+    errorTag.innerText = '';
+
+    data.forEach(element => {
 
         const div = document.createElement('div');
 
@@ -44,58 +44,70 @@ const displayData = data => {
                 <img class="card-img-top" src="${element.strMealThumb}"/>
                 <div class="card-body">
                     <h5 class="card-title mx-auto">${element.strMeal}</h5>
-                    <button onclick="displayMealDetails('${element.strMeal}')">Details...</button>
+                    <button style="color:red" onclick="loadMealDetails('${element.strMeal}')">Details...</button>
                 </div>
             </div>
         </div> `;
         div.innerHTML = mealIntro;
         mealPlaceHolder.appendChild(div);
-
     });
 }
 
-const displayMealDetails = (string) => {
+const loadMealDetails = async (userClick) => {
+    const url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${userClick}`;
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        displayMealDetails(data.meals, userClick);
+    } catch (error) {
+        showErrorInfo("Click is missing...");
+    }
+}
 
-    url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${string}`;
-    fetch(url)
-        .then(res => res.json())
-        .then(data => {
 
-            console.log('JUST STRING NAME : ', string);
+const displayMealDetails = (data, userClick) => {
 
-            resultPlaceHolder.style.display = "block"
+    console.log('JUST STRING NAME : ', userClick);
+
+    // very very important (for cleaning previous cash data)
+    errorTag.innerText = '';
+    resultPlaceHolder.innerHTML = null;
+    resultPlaceHolder.style.display = "block"
+
+    data.forEach(element => {
+
+        if (userClick === element.strMeal) {
+
             const div = document.createElement('div');
 
-            let element;
-            let mealInfo;
-            for (let i = 0; i < data.meals.length; i++) {
-                element = data.meals[i];
-
-                if (string === element.strMeal) {
-                    mealInfo = `
+            const mealInfo = `
+                    
                     <img src="${element.strMealThumb}" class="card-img-top">
-                    <div class="card-body">
-                    <h3 class="card-title">${element.strMeal}</h3>
-                    <p>Ingredients</p>
-                    <ul>                    
-                        <li>${element.strIngredient1}</li>
-                        <li>${element.strIngredient2}</li>
-                        <li>${element.strIngredient3}</li>
-                        <li>${element.strIngredient4}</li>
-                        <li>${element.strIngredient5}</li>
-                        <li>${element.strIngredient6}</li>
-                        <li>${element.strIngredient7}</li>
-                        <li>${element.strIngredient8}</li>
-                        <li>${element.strIngredient9}</li>
-                        <li>${element.strIngredient10}</li>
-                    </ul>
-                    </div> `;
-                }
-            }
 
+                    <div class="card-body">
+                        <h3 class="card-title">${element.strMeal}</h3>
+                        <p>Ingredients</p>
+                        <ul>                    
+                            <li>${element.strIngredient1}</li>
+                            <li>${element.strIngredient2}</li>
+                            <li>${element.strIngredient3}</li>
+                            <li>${element.strIngredient4}</li>
+                            <li>${element.strIngredient5}</li>
+                            <li>${element.strIngredient6}</li>
+                            <li>${element.strIngredient7}</li>
+                            <li>${element.strIngredient8}</li>
+                            <li>${element.strIngredient9}</li>
+                            <li>${element.strIngredient10}</li>
+                        </ul>
+                    </div> `;
             div.innerHTML = mealInfo;
             resultPlaceHolder.appendChild(div);
-        });
-    // very very important (for cleaning previous cash data)
-    resultPlaceHolder.innerHTML = null;
+        }
+    });
+
+
 }
+
+const showErrorInfo = error => {
+    errorTag.innerText = error;
+};
