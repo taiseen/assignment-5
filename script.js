@@ -32,6 +32,7 @@ const displayData = data => {
 
     // very very important (for cleaning previous cash data)
     mealPlaceHolder.innerHTML = null;
+    resultPlaceHolder.innerHTML = null;
     errorTag.innerText = '';
 
     data.forEach(element => {
