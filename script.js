@@ -66,15 +66,14 @@ const displayData = meals => {
 const displayMealDetails = (meal) => {
 
     // very very important (for cleaning previous cash data)
-    errorTag.innerText = '';
-    resultPlaceHolder.innerHTML = null;
     resultPlaceHolder.style.display = "block"
+    resultPlaceHolder.innerHTML = null;
+    errorTag.innerText = '';
 
-
-    const div = document.createElement('div');
+    const singleDiv = document.createElement('div');
 
     // ########################################
-    json_to_html_for_div_container(meal, div);
+    json_to_html_for_single_div(meal, singleDiv);
 
     for (let i = 1; i <= 20; i++) {
 
@@ -101,9 +100,9 @@ const displayMealDetails = (meal) => {
 
 }
 
-const json_to_html_for_div_container = (meal, div) => {
+const json_to_html_for_single_div = (meal, singleDiv) => {
 
-    div.innerHTML = `
+    singleDiv.innerHTML = `
             <img src="${meal.strMealThumb}" class="card-img-top">
             <div class="card-body">
                 <h3 class="card-title">${meal.strMeal}</h3>
@@ -125,7 +124,7 @@ const json_to_html_for_div_container = (meal, div) => {
     // this sequence is MOST Important... 
     // because these Serially ordered statement execute & create new Elements...
     // then we can catch there Existence...
-    resultPlaceHolder.appendChild(div);
+    resultPlaceHolder.appendChild(singleDiv);
 
 }
 
