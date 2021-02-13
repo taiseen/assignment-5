@@ -7,10 +7,10 @@ const errorTag = document.getElementById('aboutError');
 button.addEventListener('click', (event) => {
     event.preventDefault();
     const userInput = document.getElementById('inputForSearch').value;
-    loadData(userInput);
+    loadDataFromServer(userInput);
 });
 
-const loadData = async (userInput) => {
+const loadDataFromServer = async (userInput) => {
 
     let url = "";
     if (userInput.length === 1) {
@@ -28,89 +28,107 @@ const loadData = async (userInput) => {
     }
 }
 
-const displayData = data => {
+const displayData = meals => {
 
     // very very important (for cleaning previous cash data)
     mealPlaceHolder.innerHTML = null;
     resultPlaceHolder.innerHTML = null;
     errorTag.innerText = '';
 
-    data.forEach(element => {
+    meals.forEach(meal => {
 
-        const div = document.createElement('div');
+        const resultDiv = document.createElement('div');
+        resultDiv.className = 'singleMeal'
+        resultDiv.style.cursor = 'pointer';
 
-        const mealIntro = `
+        resultDiv.innerHTML = `
         <div class="col">
             <div class="card h-100">
-                <img class="card-img-top" src="${element.strMealThumb}"/>
+                <img class="card-img-top" src="${meal.strMealThumb}"/>
                 <div class="card-body">
-                    <h5 class="card-title mx-auto">${element.strMeal}</h5>
-                    <button style="color:red" onclick="loadMealDetails('${element.strMeal}')">Details...</button>
+                    <h5 class="card-title mx-auto">${meal.strMeal}</h5>
+                    <button style="color:red" >Details...</button>
                 </div>
             </div>
         </div> `;
-        div.innerHTML = mealIntro;
-        mealPlaceHolder.appendChild(div);
+
+        mealPlaceHolder.appendChild(resultDiv);
+
+        resultDiv.addEventListener('click', () => {
+            displayMealDetails(meal);
+        })
+
     });
 }
 
-const loadMealDetails = async (userClick) => {
-    const url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${userClick}`;
-    try {
-        const res = await fetch(url);
-        const data = await res.json();
-        displayMealDetails(data.meals, userClick);
-    } catch (error) {
-        showErrorInfo(error);
-        //showErrorInfo("Click is missing...");
-    }
-}
 
-
-const displayMealDetails = (data, userClick) => {
+// execute when User click on Details... text
+const displayMealDetails = (meal) => {
 
     // very very important (for cleaning previous cash data)
     errorTag.innerText = '';
     resultPlaceHolder.innerHTML = null;
     resultPlaceHolder.style.display = "block"
 
-    data.forEach(element => {
 
-        if (userClick === element.strMeal) {
+    const div = document.createElement('div');
 
-            //console.log("[#############] :", element['strIngredient1']);
+    // ########################################
+    json_to_html_for_div_container(meal, div);
 
-            const div = document.createElement('div');
-            const ul = document.createElement('ul');
+    for (let i = 1; i <= 20; i++) {
 
-            const mealInfo = `
-                    
-                    <img src="${element.strMealThumb}" class="card-img-top">
-                    <div class="card-body">
-                        <h3 class="card-title">${element.strMeal}</h3>
-                        <p>Ingredients</p>
-                    </div> `;
+        let ingredient = "strIngredient" + i;
+        let measure = "strMeasure" + i;
 
-            for (let i = 1; i <= 20; i++) {
-
-                let ingredient = "strIngredient" + i;
-
-                //console.log('inside loop ', element[`${ingredient}`]);
-
-                if (element[`${ingredient}`] === '' || element[`${ingredient}`] === null ) {
-                    continue;
-                }
-                const li = document.createElement('li');
-                li.innerText = element[`${ingredient}`];
-                ul.appendChild(li);
-            }
-
-            div.innerHTML = mealInfo;
-            div.appendChild(ul)
-            resultPlaceHolder.appendChild(div);
+        if (meal[`${ingredient}`] === '' || meal[`${ingredient}`] === null &&
+            meal[`${measure}`] === '' || meal[`${measure}`] === null) {
+            continue;
         }
-    });
+
+        // crating DOM 
+        const li1 = document.createElement('li');
+        const li2 = document.createElement('li');
+
+        // JSON to HTML || updating DOM
+        li1.innerText = meal[`${ingredient}`];
+        li2.innerText = meal[`${measure}`];
+
+        // adding to DOM 
+        document.getElementById("ingredients").appendChild(li1);
+        document.getElementById("measurements").appendChild(li2);
+    }
+
 }
+
+const json_to_html_for_div_container = (meal, div) => {
+
+    div.innerHTML = `
+            <img src="${meal.strMealThumb}" class="card-img-top">
+            <div class="card-body">
+                <h3 class="card-title">${meal.strMeal}</h3>
+                <div class="row">
+                    <div class="col-sm-5">
+                        <p><b><u>Ingredients</u></b></p>
+                        <ol id='ingredients'>                               
+                        </ol>
+                    </div>
+
+                    <div class="col-sm-7 ">
+                        <p><b><u>Measurements</u></b></p>
+                        <ul id='measurements'>
+                        </ul>
+                    </div>
+                </div>
+            </div> `;
+
+    // this sequence is MOST Important... 
+    // because these Serially ordered statement execute & create new Elements...
+    // then we can catch there Existence...
+    resultPlaceHolder.appendChild(div);
+
+}
+
 
 const showErrorInfo = error => {
     errorTag.innerText = error;
